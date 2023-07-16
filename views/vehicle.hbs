@@ -1,0 +1,185 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>LogRocket CRUD with gRPC and Node</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        .logrocket {
+            background-color: #764abc;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="py-5 text-center">
+           
+            <h2>Vehicle's List</h2>
+            <p class="lead">Example of CRUD made with Node.js, Express, Handlebars and gRPC</p>
+        </div>
+
+        <table class="table" id="customers_table">
+            <thead>
+                <tr>
+                    <th>Registeration Number</th>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Seating Capacity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each results}}
+                <tr>
+                    <td>{{ registerationNo }}</td>
+                    <td>{{ make }}</td>
+                    <td>{{ model }}</td>
+                    <td>{{ seatingCapacity }}</td>
+                    <td>
+                        <a href="javascript:void(0);" class="btn btn-sm edit logrocket" data-registerationNo="{{ registerationNo }}"
+                            data-make="{{ make }}" data-model="{{ model }}" data-seatingCapacity="{{ seatingCapacity }}">Edit</a>
+                        <a href="javascript:void(0);" class="btn btn-sm btn-danger remove" data-registerationNo="{{ registerationNo }}">Remove</a>
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="5" class="text-center">No data to display.</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        <button class="btn btn-success float-right" data-toggle="modal" data-target="#newCustomerModal">Add New</button>
+    </div>
+
+    <!-- New Customer Modal -->
+    <form action="/savevehicle" method="post">
+        <div class="modal fade" id="newCustomerModal" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">New Vehicle</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        
+                        <div class="form-group">
+                            <input type="text" name="registerationNo" class="form-control" placeholder="Registeration Number"
+                                required="required">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" name="make" class="form-control" placeholder="Make"
+                                required="required">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="number" name="model" class="form-control" placeholder="model" required="required">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" name="seatingCapacity" class="form-control" placeholder="seatingCapacity"
+                                required="required">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn logrocket">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Edit Customer Modal -->
+    <form action="/updatevehicle" method="post">
+        <div class="modal fade" id="editCustomerModal" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Customer</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="text" name="registerationNo"  class="form-control registerationNo" placeholder="Registeration Number" disabled="true"
+                                required="required">
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="text" name="make" class="form-control make" placeholder="Make"
+                                required="required">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="number" name="model" class="form-control model" placeholder="Model"
+                                required="required">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" name="seatingCapacity" class="form-control seatingCapacity" placeholder="Seating Capacity"
+                                required="required">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" name="id" class="registerationNo">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn logrocket">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Remove Customer Modal -->
+    <form id="add-row-form" action="/removevehicle" method="post">
+        <div class="modal fade" id="removeCustomerModal" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title"></h4>Remove Vehicle</h4>
+                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure?
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" name="registerationNo" class="form-control vehicle_id_removal"
+                            required="required">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn logrocket">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            $('#customers_table').on('click', '.edit', function () {
+                $('#editCustomerModal').modal('show');
+                $('.registerationNo').val($(this).data('registerationno'));
+                $('.make').val($(this).data('make'));
+                $('.model').val($(this).data('model'));
+                $('.seatingCapacity').val($(this).data('seatingcapacity'));
+            }).on('click', '.remove', function () {
+                $('#removeCustomerModal').modal('show');
+                $('.vehicle_id_removal').val($(this).data('registerationno'));
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+service VehicleService {
+    rpc GetAllVehicles (Empty) returns (VehicleList) {}
+    rpc GetVehicle (VehicleRequestId) returns (Vehicle) {}
+    rpc InsertVehicle (Vehicle) returns (Vehicle) {}
+    rpc UpdateVehicle (Vehicle) returns (Vehicle) {}
+    rpc RemoveVehicle (VehicleRequestId) returns (Empty) {}
+}
+
+message Empty {}
+
+message Vehicle {
+    string registerationNo = 1;
+    string make = 2;
+    int32 model = 3;
+    string seatingCapacity = 4;
+}
+
+message VehicleList {
+    repeated Vehicle vehicles = 1;
+}
+
+message VehicleRequestId {
+    string registerationNo = 1;
+}
